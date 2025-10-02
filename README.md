@@ -24,7 +24,7 @@ internal/<br>
 │   │   ├── cat.go # Cat реализация<br>
 │   │   └── dog.go # Dog реализация<br>
 ├── service/<br>
-│   └── service.go # Бизнес-логика <br>
+│   └── service.go # Универсальный сервис через интерфейс Obj <br>
 ```
 ## Ключевые принципы
 
@@ -32,6 +32,7 @@ internal/<br>
 - **Интерфейсы определяют поведение** - четкое разделение контрактов
 - **Разделение ответственности** - каждый пакет отвечает за свою область
 - **Фабричный паттерн** - централизованное создание объектов через `NewPet()`
+- **Полиморфизм** - единый интерфейс для разных типов объектов
 
 ## Пример использования
 
@@ -50,9 +51,9 @@ func main() {
     cat := pet.NewPet("cat", "Barsik", 5)
     dog := pet.NewPet("dog", "Bobbik", 3)
 
-    service.Do(h)   // Human: Baska from ykt, 22 years old
-    service.Do(cat) // Pet: Barsik (Mao!), 5 years old
-    service.Do(dog) // Pet: Bobbik (Bark!), 3 years old
+    service.Do(h)   // Name: Baska, Age: 22, City: ykt
+    service.Do(cat) // Name: Barsik, Age: 5, Say: Mao!
+    service.Do(dog) // Name: Bobbik, Age: 3, Say: Bark!
 }
 ```
 
@@ -60,17 +61,23 @@ func main() {
 ```
 Person (GetName, GetAge)
     ↙           ↘
-Human (+GetCity)  Pet (+Speak)
+Human (+GetCity, +Discribe)  Pet (+Speak, +Discribe)
+                                    ↙           ↘
+                               Cat (+Discribe)  Dog (+Discribe)
+
+Obj (Discribe) ← Реализуют все сущности
 ```
 
 ## Особенности реализации
 
     Неэкспортируемые структуры - person, human, cat, dog
 
-    Экспортируемые интерфейсы - Human, Pet, Person
+    Экспортируемые интерфейсы - Human, Pet, Person, Obj
 
     Фабричные функции - NewHuman(), NewPet(), NewCat(), NewDog()
 
-    Type-switch - полиморфная обработка в сервисном слое
+    Универсальный сервис - функция Do() работает через интерфейс Obj
 
     Композиция - переиспользование кода через embedding структур
+
+    Полиморфизм - каждая сущность сама определяет свое строковое представление
