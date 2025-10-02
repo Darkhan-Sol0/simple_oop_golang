@@ -1,6 +1,9 @@
 package human
 
-import "myServ/internal/entitie/owner"
+import (
+	"fmt"
+	"myServ/internal/entitie/owner"
+)
 
 type human struct {
 	owner.Person
@@ -10,6 +13,7 @@ type human struct {
 type Human interface {
 	owner.Person
 	GetCity() string
+	Describe() string
 }
 
 func NewHuman(name, city string, age int) Human {
@@ -21,4 +25,8 @@ func NewHuman(name, city string, age int) Human {
 
 func (h *human) GetCity() string {
 	return h.City
+}
+
+func (h *human) Describe() string {
+	return fmt.Sprintf("Name: %s, Age: %d, City: %s", h.GetName(), h.GetAge(), h.GetCity())
 }

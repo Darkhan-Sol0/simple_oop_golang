@@ -4,6 +4,7 @@ import "myServ/internal/entitie/owner"
 
 type Pet interface {
 	owner.Person
+	Describe() string
 	Speak() string
 }
 
