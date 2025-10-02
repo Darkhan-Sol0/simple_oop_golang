@@ -2,16 +2,17 @@ package service
 
 import (
 	"fmt"
-	"myServ/internal/entitie"
+	"myServ/internal/entitie/human"
+	"myServ/internal/entitie/pet"
 )
 
 func Do(obj any) {
 	switch v := obj.(type) {
-	case entitie.Pet:
-		fmt.Printf("Name: %s Owner: %s Age: %d Say: %s \n", v.GetName(), v.GetOwner(), v.GetAge(), v.Speak())
-	case entitie.Human:
-		fmt.Printf("Name: %s City: %s Age: %d Say: %s \n", v.GetName(), v.From(), v.GetAge(), v.Speak())
+	case human.Human:
+		fmt.Printf("%s, %s, %d \n", v.GetCity(), v.GetName(), v.GetAge())
+	case pet.Pet:
+		fmt.Printf("%s, %s, %d \n", v.Speak(), v.GetName(), v.GetAge())
 	default:
-		fmt.Println("none date")
+		fmt.Printf("hui\n")
 	}
 }

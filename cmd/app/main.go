@@ -1,16 +1,17 @@
 package main
 
 import (
-	"myServ/internal/entitie"
+	"myServ/internal/entitie/human"
+	"myServ/internal/entitie/pet"
 	"myServ/internal/service"
 )
 
 func main() {
-	cat := entitie.NewPet("cat", "Barsik", "Baska", 5)
-	dog := entitie.NewPet("dog", "Bobik", "Baska", 3)
-	human := entitie.NewHuman("Baska", "ykt", 22)
+	h := human.NewHuman("Baska", "ykt", 22)
+	cat := pet.NewPet("cat", "Barsik", 5)
+	dog := pet.NewPet("dog", "Bobbik", 3)
 
+	service.Do(h)
 	service.Do(cat)
 	service.Do(dog)
-	service.Do(human)
 }
