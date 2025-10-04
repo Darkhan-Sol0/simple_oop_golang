@@ -1,4 +1,4 @@
-package owner
+package base
 
 type person struct {
 	name string

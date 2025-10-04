@@ -1,32 +1,22 @@
 package human
 
 import (
-	"fmt"
-	"myServ/internal/entitie/owner"
+	"myServ/internal/entitie/human/citizen"
+	"myServ/internal/entitie/human/villager"
 )
 
-type human struct {
-	owner.Person
-	City string
-}
-
 type Human interface {
-	owner.Person
-	GetCity() string
 	Describe() string
+	GetName() string
 }
 
-func NewHuman(name, city string, age int) Human {
-	return &human{
-		Person: owner.NewPerson(name, age),
-		City:   city,
+func NewHuman(humanType, city, name string, age int) Human {
+	switch humanType {
+	case "citizen":
+		return citizen.NewCitizen(name, city, age)
+	case "villager":
+		return villager.NewVillager(name, city, age)
+	default:
+		return nil
 	}
-}
-
-func (h *human) GetCity() string {
-	return h.City
-}
-
-func (h *human) Describe() string {
-	return fmt.Sprintf("Name: %s, Age: %d, City: %s", h.GetName(), h.GetAge(), h.GetCity())
 }

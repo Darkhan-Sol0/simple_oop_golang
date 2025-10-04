@@ -4,35 +4,41 @@
 
 ## Архитектура
 ```
-Person (базовый интерфейс) 
-  ↙    ↘ 
-Human   Pet 
-      ↙ ↘ 
-    Cat Dog
+base.Person (базовый интерфейс)
+      ↙           ↘
+Human (фабрика) Pet (фабрика)
+    ↙   ↘           ↙   ↘
+Citizen Villager  Cat   Dog
 ```
 
 ## Структура проекта
 ```
-internal/<br>
-├── entitie/<br>
-│   ├── owner/<br>
-│   │   └── owner.go # Базовый интерфейс Person<br>
-│   ├── human/<br>
-│   │   └── human.go # Human структура и интерфейс<br>
-│   ├── pet/<br>
-│   │   ├── pet.go # Pet интерфейс и фабрика<br>
-│   │   ├── cat.go # Cat реализация<br>
-│   │   └── dog.go # Dog реализация<br>
-├── service/<br>
-│   └── service.go # Универсальный сервис через интерфейс Obj <br>
+internal/
+├── entitie/
+│ ├── base/
+│ │     └── base.go # Базовый интерфейс Person
+│ ├── human/
+│ │     ├── human.go # Human фабрика и интерфейс
+│ │     ├── citizen/
+│ │     │   └── citizen.go # Citizen реализация
+│ │     └── villager/
+│ │         └── villager.go # Villager реализация
+│ └── pet/
+│       ├── pet.go # Pet фабрика и интерфейс
+│       ├── cat/
+│       │     └── cat.go # Cat реализация
+│       └── dog/
+│             └── dog.go # Dog реализация
+├── service/
+│       └── service.go # Универсальный сервис через интерфейс Obj
 ```
 ## Ключевые принципы
 
-- **Композиция вместо наследования** - встраивание структур через `owner.Person`
+- **Композиция вместо наследования** - встраивание структур через `base.Person`
 - **Интерфейсы определяют поведение** - четкое разделение контрактов
 - **Разделение ответственности** - каждый пакет отвечает за свою область
-- **Фабричный паттерн** - централизованное создание объектов через `NewPet()`
-- **Полиморфизм** - единый интерфейс для разных типов объектов
+- **Фабричный паттерн** - централизованное создание объектов через `NewHuman()` и `NewPet()`
+- **Полиморфизм** - единый интерфейс `Obj` для всех сущностей
 
 ## Пример использования
 
@@ -47,37 +53,41 @@ import (
 )
 
 func main() {
-    h := human.NewHuman("Baska", "ykt", 22)
-    cat := pet.NewPet("cat", "Barsik", 5)
-    dog := pet.NewPet("dog", "Bobbik", 3)
+    citizen := human.NewHuman("citizen", "Yakutsk", "Baska", 22)
+    villager := human.NewHuman("villager", "Maya", "Uyban", 42)
+    cat := pet.NewPet("cat", "Barsik", "Baska", 5)
+    dog := pet.NewPet("dog", "Bobbik", "Uyban", 3)
 
-    service.Do(h)   // Name: Baska, Age: 22, City: ykt
-    service.Do(cat) // Name: Barsik, Age: 5, Say: Mao!
-    service.Do(dog) // Name: Bobbik, Age: 3, Say: Bark!
-}
+    service.Do(citizen)  // Name: Baska, Age: 22, City: Yakutsk
+    service.Do(villager) // Name: Uyban, Age: 42, Village: Maya
+    service.Do(cat)      // Name: Barsik, Age: 5, Owner: Baska, Say: Mao!
+    service.Do(dog)      // Name: Bobbik, Age: 3, Owner: Uyban, Say: Bark!
 ```
 
 ## Иерархия интерфейсов
 ```
-Person (GetName, GetAge)
-    ↙           ↘
-Human (+GetCity, +Discribe)  Pet (+Speak, +Discribe)
-                                    ↙           ↘
-                               Cat (+Discribe)  Dog (+Discribe)
+base.Person (GetName, GetAge)
+    ↙               ↘
+Human (фасад)       Pet (фасад)
+    ↙     ↘           ↙       ↘
+Citizen  Villager   Cat       Dog
+    ↓       ↓         ↓         ↓
+(Describe) (Describe) (Describe) (Describe)
 
-Obj (Discribe) ← Реализуют все сущности
+Obj (Describe) ← Реализуют все сущности
 ```
 
 ## Особенности реализации
+    Неэкспортируемые структуры - citizen, villager, cat, dog
 
-    Неэкспортируемые структуры - person, human, cat, dog
+    Экспортируемые интерфейсы - Human, Pet, base.Person, service.Obj
 
-    Экспортируемые интерфейсы - Human, Pet, Person, Obj
-
-    Фабричные функции - NewHuman(), NewPet(), NewCat(), NewDog()
+    Фабричные функции - NewHuman(), NewPet(), NewCitizen(), NewVillager(), NewCat(), NewDog()
 
     Универсальный сервис - функция Do() работает через интерфейс Obj
 
-    Композиция - переиспользование кода через embedding структур
+    Композиция - переиспользование кода через embedding структур base.Person
+
+    Владельцы животных - питомцы связаны с людьми через поле owner
 
     Полиморфизм - каждая сущность сама определяет свое строковое представление

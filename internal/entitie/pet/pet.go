@@ -1,19 +1,20 @@
 package pet
 
-import "myServ/internal/entitie/owner"
+import (
+	"myServ/internal/entitie/pet/cat"
+	"myServ/internal/entitie/pet/dog"
+)
 
 type Pet interface {
-	owner.Person
 	Describe() string
-	Speak() string
 }
 
-func NewPet(petType, name string, age int) Pet {
+func NewPet(petType, name, owner string, age int) Pet {
 	switch petType {
 	case "cat":
-		return NewCat(name, age)
+		return cat.NewCat(name, owner, age)
 	case "dog":
-		return NewDog(name, age)
+		return dog.NewDog(name, owner, age)
 	default:
 		return nil
 	}
